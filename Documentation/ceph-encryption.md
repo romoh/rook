@@ -188,18 +188,18 @@ References:
 - https://man7.org/linux/man-pages/man8/cryptsetup.8.html#LUKS_EXTENSION
 
 To be able to fulfill key rotation requirements, changes are required to either
-    Ceph or Rook depending on the Rook Ceph cluster deployment type:
+Ceph or Rook depending on the Rook Ceph cluster deployment type:
 
-    1.  Host based clusters:
+1.  Host based clusters:
 
-        a.  Ceph: Key rotation will need to be enabled in Ceph and a flag
-        exposed to enabled it. For rotation frequency, it can default to 90 days which is commonly used.
+    a.  Ceph: Key rotation will need to be enabled in Ceph and a flag
+    exposed to enabled it. For rotation frequency, it can default to 90 days which is commonly used.
 
-        b.  Rook: Add support to expose and pass the required flags to enable
-        key rotation.
+    b.  Rook: Add support to expose and pass the required flags to enable
+    key rotation.
 
-    2.  PVC based clusters: Since keys are managed by Rook, it is easier to add
-        such capability into rook. This can be added as an extra flag to the cluster crd `rotateEncryptionKey: true`. Once specified, rook can automatically regenerate a new key on certain frequency (can default to 90days) and update the LUKS header as needed.
+2.  PVC based clusters: Since keys are managed by Rook, it is easier to add
+    such capability into rook. This can be added as an extra flag to the cluster crd `rotateEncryptionKey: true`. Once specified, rook can automatically regenerate a new key on certain frequency (can default to 90days) and update the LUKS header as needed.
 
 
 ## BYOK Support in Rook
@@ -221,4 +221,5 @@ This option will be only available for PVC based clusters, similar to how KMS
 works today in rook.
 
 At a high-level, the design will be as follows:
+
 ![](media/byok-design.png)
