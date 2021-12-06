@@ -220,4 +220,5 @@ https://github.com/hashicorp/vault-csi-provider
 This option will be only available for PVC based clusters, similar to how KMS
 works today in rook.
 
-At a high-level, the design will be as follows: ~[](media/byok-design.png)
+At a high-level, the design will be as follows:
+![](media/byok-design.png)
