@@ -157,7 +157,7 @@ spec:
 ```
 
 ## Customer requirements & encryption at rest
-There are scenarios when the managers of the ceph cluster are different than the
+There are scenarios when the managers of the Ceph cluster are different than the
 consumers of the cluster. In those scenarios, encryption at rest can be a legal
 and compliance requirement, that includes key rotation support and the ability
 for customers to bring their own encryption keys.
@@ -188,8 +188,9 @@ References:
 - https://man7.org/linux/man-pages/man8/cryptsetup.8.html#LUKS_EXTENSION
 
 To be able to fulfill key rotation requirements, changes are required to either
-    Ceph or Rook depending on the Rook Ceph cluster deployment type: 1.  Host
-    based clusters:
+    Ceph or Rook depending on the Rook Ceph cluster deployment type:
+
+    1.  Host based clusters:
 
         a.  Ceph: Key rotation will need to be enabled in Ceph and a flag
         exposed to enabled it. For rotation frequency, it can default to 90 days which is commonly used.
@@ -198,7 +199,7 @@ To be able to fulfill key rotation requirements, changes are required to either
         key rotation.
 
     2.  PVC based clusters: Since keys are managed by Rook, it is easier to add
-        such capability into rook. This can be added as an extra flag to the cluster crds to `rotateEncryptionKey: true`
+        such capability into rook. This can be added as an extra flag to the cluster crd `rotateEncryptionKey: true`. Once specified, rook can automatically regenerate a new key on certain frequency (can default to 90days) and update the LUKS header as needed.
 
 
 ## BYOK Support in Rook
@@ -207,11 +208,10 @@ Customers may be already using existing key management systems to manage their
 secrets or relying on enterprise grade cloud providers for key management. Thus
 the proposal is to leverage  [secrets store
 csi](https://github.com/kubernetes-sigs/secrets-store-csi-driver) for mounting
-of secrets using external secret stores.
+of secrets from external secret stores into the OSDs.
 
-Supporting secrets-store-csi will allow customers to leverage external secrets
-stores and pick from the different existing providers based on their scenarios.
-Supported providers include:
+Supporting secrets-store-csi will allow customers to pick from the different
+existing providers based on their scenarios. Supported providers include:
 https://github.com/Azure/secrets-store-csi-driver-provider-azure
 https://github.com/aws/secrets-store-csi-driver-provider-aws
 https://github.com/googlecloudplatform/secrets-store-csi-driver-provider-gcp
@@ -220,5 +220,4 @@ https://github.com/hashicorp/vault-csi-provider
 This option will be only available for PVC based clusters, similar to how KMS
 works today in rook.
 
-At a high-level, the design will be as follows:
-~[](media/byok-design.png)
+At a high-level, the design will be as follows: ~[](media/byok-design.png)
