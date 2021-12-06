@@ -22,6 +22,7 @@ import (
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	secretsstorev1 "sigs.k8s.io/secrets-store-csi-driver/apis/v1"
 )
 
 // ***************************************************************************
@@ -229,12 +230,27 @@ type LogCollectorSpec struct {
 	Periodicity string `json:"periodicity,omitempty"`
 }
 
+// SecuritySpecType represents the security spec type
+type SecuritySpecType string
+
+const (
+	// Uses a key management service
+	KMS SecuritySpecType = "kms"
+	// Bring Your Own Key csi provider
+	BYOK SecuritySpecType = "byok"
+)
+
 // SecuritySpec is security spec to include various security items such as kms
 type SecuritySpec struct {
+	Type SecuritySpecType `json:"type,omitempty"`
 	// KeyManagementService is the main Key Management option
 	// +optional
 	// +nullable
 	KeyManagementService KeyManagementServiceSpec `json:"kms,omitempty"`
+	// BringYourOwnKeyProvider is another option for external key management
+	// +optional
+	// +nullable
+	BringYourOwnKeyProvider BringYourOwnKeyProviderSpec `json:"secret-store-csi,omitempty"`
 }
 
 // KeyManagementServiceSpec represent various details of the KMS server
@@ -247,6 +263,11 @@ type KeyManagementServiceSpec struct {
 	// TokenSecretName is the kubernetes secret containing the KMS token
 	// +optional
 	TokenSecretName string `json:"tokenSecretName,omitempty"`
+}
+
+type BringYourOwnKeyProviderSpec struct {
+	// Provider contains the secrets csi provider name and details
+	SecretStoreProvider secretsstorev1.SecretProviderClassSpec `json:"secretStore,omitempty"`
 }
 
 // CephVersionSpec represents the settings for the Ceph version that Rook is orchestrating.

@@ -19,7 +19,10 @@ package osd
 import (
 	"encoding/base64"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"path"
+	"path/filepath"
 
 	"github.com/pkg/errors"
 	cephv1 "github.com/rook/rook/pkg/apis/ceph.rook.io/v1"
@@ -75,6 +78,22 @@ func generateDmCryptKey() (string, error) {
 	}
 
 	return base64.StdEncoding.EncodeToString(key), nil
+}
+
+func readKeyFromMount() (string, error) {
+	// TODO: move to const, also what name to pick?
+	keyDirPath := "data/keys/ceph-key"
+	if _, err := os.Stat(keyDirPath); os.IsNotExist(err) {
+		return "", errors.Wrapf(err, "## failed to read encryption key from the directory %q", keyDirPath)
+	}
+	contents, err := ioutil.ReadFile(filepath.Clean(keyDirPath))
+	if err != nil {
+		return "", errors.Wrapf(err, "## failed to read encryption key from the directory %q", keyDirPath)
+	}
+	key := string(contents)
+
+	logger.Infof("***** BYOK - key read ****** %q", key)
+	return key, nil
 }
 
 func (c *Cluster) isCephVolumeRawModeSupported() bool {

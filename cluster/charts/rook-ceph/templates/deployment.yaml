@@ -31,6 +31,8 @@ spec:
           name: rook-config
         - mountPath: /etc/ceph
           name: default-config-dir
+        - mountPath: /data/keys
+          name: encryption-keys
         env:
         - name: ROOK_CURRENT_NAMESPACE_ONLY
           value: {{ .Values.currentNamespaceOnly | quote }}
@@ -300,3 +302,11 @@ spec:
         emptyDir: {}
       - name: default-config-dir
         emptyDir: {}
+      - name: encryption-keys
+      csi:
+        driver: secrets-store.csi.k8s.io
+        readOnly: true
+        volumeAttributes:
+          secretProviderClass: "azure-poc-vault"    # TODO: make configurable
+        nodePublishSecretRef:                       # Only required when using service principal mode
+          name: secrets-store-creds

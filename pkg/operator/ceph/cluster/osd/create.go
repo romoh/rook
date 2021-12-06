@@ -199,12 +199,21 @@ func (c *Cluster) startProvisioningOverPVCs(config *provisionConfig, errs *provi
 				continue
 			}
 
-			// create encryption Kubernetes Secret if the PVC is encrypted
-			key, err := generateDmCryptKey()
-			if err != nil {
-				errMsg := fmt.Sprintf("failed to generate dmcrypt key for osd claim %q. %v", osdProps.pvc.ClaimName, err)
-				errs.addError(errMsg)
-				continue
+			// TODO: BYOK should be driven from the cluster spec
+			key := ""
+			if c.spec.Security.Type == cephv1.BYOK {
+				// use mounted secret to set inside the OSD
+				logger.Infof("***** BYOK ******")
+				key, err = readKeyFromMount()
+				logger.Debugf("SecretStoreCSI is used %q", osdProps.pvc.ClaimName)
+			} else {
+				// create encryption Kubernetes Secret if the PVC is encrypted
+				key, err = generateDmCryptKey()
+				if err != nil {
+					errMsg := fmt.Sprintf("failed to generate dmcrypt key for osd claim %q. %v", osdProps.pvc.ClaimName, err)
+					errs.addError(errMsg)
+					continue
+				}
 			}
 
 			// Initialize the KMS code
