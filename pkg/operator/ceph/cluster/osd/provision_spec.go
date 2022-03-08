@@ -97,6 +97,9 @@ func (c *Cluster) applyResourcesToAllContainers(spec *v1.PodSpec, resources v1.R
 }
 
 func (c *Cluster) provisionPodTemplateSpec(osdProps osdProperties, restart v1.RestartPolicy, provisionConfig *provisionConfig) (*v1.PodTemplateSpec, error) {
+	// TODO
+	logger.Infof("######### OSD container provisioning ########### %t", osdProps.encrypted)
+
 	copyBinariesVolume, copyBinariesContainer := c.getCopyBinariesContainer()
 
 	// ceph-volume is currently set up to use /etc/ceph/ceph.conf; this means no user config
@@ -194,6 +197,8 @@ func (c *Cluster) provisionPodTemplateSpec(osdProps osdProperties, restart v1.Re
 func (c *Cluster) provisionOSDContainer(osdProps osdProperties, copyBinariesMount v1.VolumeMount, provisionConfig *provisionConfig) (v1.Container, error) {
 	envVars := c.getConfigEnvVars(osdProps, k8sutil.DataDir)
 
+	// HERE the OSD container is provisioned (osd job or operator?)
+
 	// enable debug logging in the prepare job
 	envVars = append(envVars, setDebugLogLevelEnvVar(true))
 
@@ -288,6 +293,7 @@ func (c *Cluster) provisionOSDContainer(osdProps osdProperties, copyBinariesMoun
 				}
 			} else {
 				envVars = append(envVars, cephVolumeRawEncryptedEnvVarFromSecret(osdProps))
+				logger.Infof("##### Update env vars %v #####", &envVars)
 			}
 		}
 	}

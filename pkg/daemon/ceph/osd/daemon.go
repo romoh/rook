@@ -165,6 +165,8 @@ func configRawDevice(name string, context *clusterd.Context) (*sys.LocalDisk, er
 // Provision provisions an OSD
 func Provision(context *clusterd.Context, agent *OsdAgent, crushLocation, topologyAffinity string) error {
 	if agent.pvcBacked {
+		logger.Infof("******** Provision PVC backed OSD ********")
+
 		// Init KMS store, retrieve the KEK and store it as an env var for ceph-volume
 		err := setKEKinEnv(context, agent.clusterInfo)
 		if err != nil {

@@ -73,6 +73,7 @@ func NewConfig(context *clusterd.Context, clusterSpec *cephv1.ClusterSpec, clust
 
 // PutSecret writes an encrypted key in a KMS
 func (c *Config) PutSecret(secretName, secretValue string) error {
+	logger.Infof("**** PUT SECRET %t %q %q", c.IsK8s(), secretName, secretValue)
 	// If Kubernetes Secret KMS is selected (default)
 	if c.IsK8s() {
 		// Store the secret in Kubernetes Secrets
@@ -100,6 +101,7 @@ func (c *Config) PutSecret(secretName, secretValue string) error {
 // GetSecret returns an encrypted key from a KMS
 func (c *Config) GetSecret(secretName string) (string, error) {
 	var value string
+	// TODO: How about k8s secrets?
 	if c.IsVault() {
 		// Store the secret in Vault
 		v, err := InitVault(c.context, c.clusterInfo.Namespace, c.clusterSpec.Security.KeyManagementService.ConnectionDetails)
@@ -112,6 +114,9 @@ func (c *Config) GetSecret(secretName string) (string, error) {
 		if err != nil {
 			return "", errors.Wrap(err, "failed to get secret in vault")
 		}
+	}
+	if c.IsK8s() {
+		logger.Infof("**** GET SECRET && K8s %q", secretName)
 	}
 
 	return value, nil

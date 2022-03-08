@@ -351,6 +351,7 @@ func (a *OsdAgent) initializeBlockPVC(context *clusterd.Context, devices *Device
 			}
 
 			if isEncrypted {
+				logger.Infof("****** YESSSSSSSSSSS- ENCRYPTED")
 				immediateExecuteArgs = append(immediateExecuteArgs, encryptedFlag)
 			}
 
@@ -1049,7 +1050,9 @@ func GetCephVolumeRawOSDs(context *clusterd.Context, clusterInfo *client.Cluster
 		}
 
 		// If this is an encrypted OSD
+		// TODO? shouldn't need any change
 		if os.Getenv(oposd.CephVolumeEncryptedKeyEnvVarName) != "" {
+			logger.Infof("**** THIS IS ENCRYPTED")
 			// // Set subsystem and label for recovery and detection
 			// We use /mnt/<pvc_name> since LUKS label/subsystem must be applied on the main block device, not the resulting encrypted dm
 			mainBlock := fmt.Sprintf("/mnt/%s", os.Getenv(oposd.PVCNameEnvVarName))

@@ -78,6 +78,24 @@ func setKEKinEnv(context *clusterd.Context, clusterInfo *cephclient.ClusterInfo)
 			return errors.Wrap(err, "failed to set key encryption key env variable for ceph-volume")
 		}
 	}
+	// TODO: is this working?
+	// if kmsConfig.IsK8s() {
+	// 	// TODO: Add logging
+	// 	logger.Infof("**** SET IN ENV")
+
+	// 	// Store the secret in Kubernetes Secrets
+	// 	// Fetch the KEK
+	// 	kek, err := kmsConfig.GetSecret(os.Getenv(oposd.PVCNameEnvVarName))
+	// 	if err != nil {
+	// 		return errors.Wrapf(err, "**failed to retrieve key encryption key from %q kms", kmsConfig.Provider)
+	// 	}
+
+	// 	// Set the KEK as an env variable for ceph-volume
+	// 	err = os.Setenv(oposd.CephVolumeEncryptedKeyEnvVarName, kek)
+	// 	if err != nil {
+	// 		return errors.Wrap(err, "***failed to set key encryption key env variable for ceph-volume")
+	// 	}
+	// }
 
 	return nil
 }
